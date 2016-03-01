@@ -57,7 +57,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	fade = new NodeUI(uiLayer->world);
 	fade->setRationalHeight(1.f, uiLayer);
 	fade->setRationalWidth(1.f, uiLayer);
-	fade->setBackgroundColour(0,0,0,0);
+	fade->setBackgroundColour(56/255.f,97/255.f,65/255.f,0);
 	
 	layout->addChild(daysLabel);
 	uiLayer->addChild(fade);
@@ -90,6 +90,7 @@ void MY_Scene_Main::update(Step * _step){
 		t = 135;
 		if(mouse->leftJustPressed()){
 			boardBus();
+			_step->cycles = 540;
 		}
 	}else if(p < 800){
 		// leaving
