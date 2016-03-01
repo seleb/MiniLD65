@@ -1,6 +1,14 @@
 {
   "assets": [
   	{
+  		"id": "FONT",
+  		"type": "font",
+  		"src": "PixelPlain.ttf",
+  		"size": 12,
+  		"antialiased": false
+  	},
+
+  	{
   		"id": "BG",
   		"type": "texture",
   		"src": "bg.png",

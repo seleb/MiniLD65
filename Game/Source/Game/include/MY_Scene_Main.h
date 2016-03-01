@@ -2,6 +2,8 @@
 
 #include <MY_Scene_Base.h>
 
+class TextLabel;
+
 class MY_Scene_Main : public MY_Scene_Base{
 public:
 	// how awake you are
@@ -10,6 +12,8 @@ public:
 	float sleepiness;
 	// days since you last missed school
 	unsigned long int day;
+
+	TextLabel * daysLabel;
 
 	MY_Scene_Main(Game * _game);
 

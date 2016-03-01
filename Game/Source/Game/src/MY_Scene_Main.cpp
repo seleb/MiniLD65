@@ -38,6 +38,22 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	// set the layout's size to 100% of its parent
 	layout->setRationalHeight(1.f, uiLayer);
 	layout->setRationalWidth(1.f, uiLayer);
+	
+	SliderControlled * awakeSlider = new SliderControlled(uiLayer->world, &awake, 0, 100);
+	SliderControlled * sleepSlider = new SliderControlled(uiLayer->world, &sleepiness, 0, 100);
+	daysLabel = new TextLabel(uiLayer->world, font, textShader);
+	daysLabel->horizontalAlignment = kCENTER;
+	daysLabel->verticalAlignment = kMIDDLE;
+	daysLabel->setText("Days since you last missed school: 0");
+
+	layout->addChild(daysLabel);
+	layout->addChild(awakeSlider);
+	layout->addChild(sleepSlider);
+	
+	awakeSlider->setRationalWidth(1.f, layout);
+	sleepSlider->setRationalWidth(1.f, layout);
+	daysLabel->setRationalWidth(1.f, layout);
+	//daysLabel->setHeight(font->getLineHeight()*2.5f);
 
 
 	uiLayer->invalidateLayout();
