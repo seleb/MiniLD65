@@ -6,17 +6,26 @@ class TextLabel;
 
 class MY_Scene_Main : public MY_Scene_Base{
 public:
-	// how awake you are
-	float awake;
-	// how sleepy you are
-	float sleepiness;
 	// days since you last missed school
 	unsigned long int day;
+	unsigned long int busDelay;
+	bool onBus;
+	bool busOpen;
 
 	TextLabel * daysLabel;
+	Sprite * kid, * bus;
 
 	MY_Scene_Main(Game * _game);
 
 
 	virtual void update(Step * _step) override;
+	virtual void render(sweet::MatrixStack * _matrixStack, RenderOptions * _renderOptions) override;
+
+
+	void boardBus();
+
+	void nextDay();
+	void gameOver();
+
+	void updateDay();
 };

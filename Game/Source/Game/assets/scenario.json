@@ -20,6 +20,20 @@
   		"type": "texture",
   		"src": "kid.png",
   		"generateMipmaps": false
+  	},
+
+  	{
+  		"id": "BUS",
+  		"type": "texture",
+  		"src": "bus.png",
+  		"generateMipmaps": false
+  	},
+
+  	{
+  		"id": "BUS-OPEN",
+  		"type": "texture",
+  		"src": "busOpen.png",
+  		"generateMipmaps": false
   	}
   ]
 }

@@ -5,9 +5,14 @@
 #include <sweet/UI.h>
 #include <OrthographicCamera.h>
 #include <Sprite.h>
+#include <RenderOptions.h>
+#include <NumberUtils.h>
 
 MY_Scene_Main::MY_Scene_Main(Game * _game) :
-	MY_Scene_Base(_game)
+	MY_Scene_Base(_game),
+	day(0),
+	busDelay(0),
+	busOpen(false)
 {
 	// remove default camera
 	removeCamera(activeCamera);
@@ -23,7 +28,12 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	childTransform->addChild(bg)->scale(256, false)->translate(256/2.f, 256/2.f, 0);
 
 
-	Sprite * kid = new Sprite(MY_ResourceManager::globalAssets->getTexture("KID")->texture, baseShader);
+	bus = new Sprite(MY_ResourceManager::globalAssets->getTexture("BUS")->texture, baseShader);
+	bus->mesh->setScaleMode(GL_NEAREST);
+	childTransform->addChild(bus)->scale(125, false)->translate(-125, 175, 0);
+
+
+	kid = new Sprite(MY_ResourceManager::globalAssets->getTexture("KID")->texture, baseShader);
 	kid->mesh->setScaleMode(GL_NEAREST);
 	childTransform->addChild(kid)->scale(29, false)->translate(29/2.f + 145, 29/2.f + 105, 0);
 
@@ -39,19 +49,13 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	layout->setRationalHeight(1.f, uiLayer);
 	layout->setRationalWidth(1.f, uiLayer);
 	
-	SliderControlled * awakeSlider = new SliderControlled(uiLayer->world, &awake, 0, 100);
-	SliderControlled * sleepSlider = new SliderControlled(uiLayer->world, &sleepiness, 0, 100);
 	daysLabel = new TextLabel(uiLayer->world, font, textShader);
 	daysLabel->horizontalAlignment = kCENTER;
 	daysLabel->verticalAlignment = kMIDDLE;
-	daysLabel->setText("Days since you last missed school: 0");
+	updateDay();
 
 	layout->addChild(daysLabel);
-	layout->addChild(awakeSlider);
-	layout->addChild(sleepSlider);
 	
-	awakeSlider->setRationalWidth(1.f, layout);
-	sleepSlider->setRationalWidth(1.f, layout);
 	daysLabel->setRationalWidth(1.f, layout);
 	//daysLabel->setHeight(font->getLineHeight()*2.5f);
 
@@ -60,26 +64,67 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 }
 
 void MY_Scene_Main::update(Step * _step){
-	if(mouse->leftDown()){
-		awake += 1;
-		sleepiness += 2;
+	int p = _step->cycles;
+	p = p % 800 - busDelay;
+	int t = 0;
+	if(p < 250){
+		// pulling up
+		t = Easing::easeOutCubic(p, 0, 135, 250);
+	}else if(p < 500){
+		// stopped
+		if(!busOpen){
+			busOpen = true;
+			bus->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("BUS-OPEN")->texture);
+		}
+
+		t = 135;
+		if(mouse->leftJustPressed()){
+			boardBus();
+		}
+	}else if(p < 750){
+		// leaving
+		if(busOpen){
+			busOpen = false;
+			bus->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("BUS")->texture);
+		}
+		t = Easing::easeInCubic(p-500, 135, 200, 250);
+	}else if(p < 800){
+		// waiting
+		t = 335;
 	}else{
-		awake -= 1;
-		sleepiness -= awake > 50 ? 1 : 2;
+		// left
+		if(onBus){
+			nextDay();
+		}else{
+			gameOver();
+		}
 	}
-
-
-	if(sleepiness < 0){
-		sleepiness = 0;
-	}else if(sleepiness > 100){
-		sleepiness = 100;
-	}
-
-	if(awake < 0){
-		// fall asleep, lose game
-	}else if(awake > 100){
-		awake = 100;
-	}
+	bus->firstParent()->translate(t, bus->getWorldPos().y, 0, false);
 	
 	MY_Scene_Base::update(_step);
+}
+
+void MY_Scene_Main::boardBus(){
+	onBus = true;
+	childTransform->removeChild(kid->firstParent());
+}
+
+void MY_Scene_Main::gameOver(){
+}
+
+void MY_Scene_Main::nextDay(){
+	day += 1;
+	onBus = false;
+	childTransform->addChild(kid->firstParent(), false);
+	busDelay = sweet::NumberUtils::randomInt(50, 500);
+	updateDay();
+}
+
+void MY_Scene_Main::updateDay(){
+	daysLabel->setText("Days since you last missed school: " + std::to_string(day));
+}
+
+void MY_Scene_Main::render(sweet::MatrixStack * _matrixStack, RenderOptions * _renderOptions){
+	_renderOptions->depthEnabled = false;
+	MY_Scene_Base::render(_matrixStack, _renderOptions);
 }
