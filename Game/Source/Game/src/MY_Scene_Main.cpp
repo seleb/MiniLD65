@@ -54,7 +54,13 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	daysLabel->verticalAlignment = kMIDDLE;
 	updateDay();
 
+	fade = new NodeUI(uiLayer->world);
+	fade->setRationalHeight(1.f, uiLayer);
+	fade->setRationalWidth(1.f, uiLayer);
+	fade->setBackgroundColour(0,0,0,0);
+	
 	layout->addChild(daysLabel);
+	uiLayer->addChild(fade);
 	
 	daysLabel->setRationalWidth(1.f, layout);
 	//daysLabel->setHeight(font->getLineHeight()*2.5f);
@@ -65,12 +71,16 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 
 void MY_Scene_Main::update(Step * _step){
 	int p = _step->cycles;
-	p = p % 800 - busDelay;
+	p = p % 850;
 	int t = 0;
-	if(p < 250){
+	if(p < 50){
+		fade->bgColour.a = 1.f - p/50.f;
+	}
+	
+	if(p < 300){
 		// pulling up
-		t = Easing::easeOutCubic(p, 0, 135, 250);
-	}else if(p < 500){
+		t = Easing::easeOutCubic(p-50, 0, 135, 250);
+	}else if(p < 550){
 		// stopped
 		if(!busOpen){
 			busOpen = true;
@@ -81,14 +91,15 @@ void MY_Scene_Main::update(Step * _step){
 		if(mouse->leftJustPressed()){
 			boardBus();
 		}
-	}else if(p < 750){
+	}else if(p < 800){
 		// leaving
 		if(busOpen){
 			busOpen = false;
 			bus->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("BUS")->texture);
 		}
-		t = Easing::easeInCubic(p-500, 135, 200, 250);
-	}else if(p < 800){
+		t = Easing::easeInCubic(p-550, 135, 200, 250);
+	}else if(p < 849){
+		fade->bgColour.a = (p-799)/50.f;
 		// waiting
 		t = 335;
 	}else{
@@ -115,8 +126,9 @@ void MY_Scene_Main::gameOver(){
 void MY_Scene_Main::nextDay(){
 	day += 1;
 	onBus = false;
+	busOpen = false;
 	childTransform->addChild(kid->firstParent(), false);
-	busDelay = sweet::NumberUtils::randomInt(50, 500);
+	busDelay = 0;//sweet::NumberUtils::randomInt(50, 500);
 	updateDay();
 }
 

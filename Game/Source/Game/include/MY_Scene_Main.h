@@ -14,6 +14,7 @@ public:
 
 	TextLabel * daysLabel;
 	Sprite * kid, * bus;
+	NodeUI * fade;
 
 	MY_Scene_Main(Game * _game);
 
