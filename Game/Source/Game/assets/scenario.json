@@ -1,3 +1,17 @@
 {
-  "assets": []
+  "assets": [
+  	{
+  		"id": "BG",
+  		"type": "texture",
+  		"src": "bg.png",
+  		"generateMipmaps": false
+  	},
+
+  	{
+  		"id": "KID",
+  		"type": "texture",
+  		"src": "kid.png",
+  		"generateMipmaps": false
+  	}
+  ]
 }
