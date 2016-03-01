@@ -34,6 +34,13 @@
   		"type": "texture",
   		"src": "busOpen.png",
   		"generateMipmaps": false
+  	},
+
+  	{
+  		"id": "GAMEOVER",
+  		"type": "texture",
+  		"src": "gameover.png",
+  		"generateMipmaps": false
   	}
   ]
 }

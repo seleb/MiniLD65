@@ -1,6 +1,7 @@
 #pragma once
 
 #include <MY_Scene_Main.h>
+#include <MY_Scene_GameOver.h>
 #include <shader/ComponentShaderText.h>
 #include <sweet/UI.h>
 #include <OrthographicCamera.h>
@@ -12,7 +13,8 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	MY_Scene_Base(_game),
 	day(0),
 	busDelay(0),
-	busOpen(false)
+	busOpen(false),
+	onBus(false)
 {
 	// remove default camera
 	removeCamera(activeCamera);
@@ -122,6 +124,8 @@ void MY_Scene_Main::boardBus(){
 }
 
 void MY_Scene_Main::gameOver(){
+	game->scenes["gameover"] = new MY_Scene_GameOver(game, day);
+	game->switchScene("gameover", true);
 }
 
 void MY_Scene_Main::nextDay(){
